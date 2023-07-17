@@ -1,0 +1,14 @@
+.footer__wrapper {
+	width: 100%;
+	padding: 3.125rem 0 3.125rem 0;
+	.footer {
+		width: 25rem;
+		margin: 0 auto;
+		padding: 1.25rem;
+		text-align: center;
+		color: var(--main-dark-text);
+		font-size: var(--base-font-size);
+		text-transform: uppercase;
+		letter-spacing: var(--base-letter-spacing);
+	}
+}

@@ -1,0 +1,91 @@
+.header {
+	width: 100%;
+	background-color: var(--base-background);
+	// position: absolute;
+	// top: 0;
+	// left: 0;
+	// z-index: 10;
+	.header__wrapper {
+		width: 75rem;
+		padding: 1.25rem 0 1.25rem 0;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.header__logo {
+		display: inline-block;
+    width: 12.5rem;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		.header__logo-text {
+			color: #2B90DC;
+			font-size: 31px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;
+			display: block;
+		}
+		.header__logo-svg {
+			width: 3.125rem;
+			height: 3.125rem;
+			padding: 0 20px 0 0;
+		}
+  }
+	// .header__menu {
+	// 	display: flex;
+	// 	align-items: center;
+	// 	justify-content: space-between;
+	// 	.header__menu-link {
+	// 		display: inline-block;
+	// 		color: var(--main-dark-text);
+	// 		font-size: var(--base-font-size);
+	// 		line-height: var(--base-line-height);
+	// 		letter-spacing: var(--base-letter-spacing);
+	// 		font-weight: 700;
+	// 		margin-right: 3.125rem;
+	// 	}
+	// 	.header__menu-link:hover {
+	// 		color: var(--second-color-text);
+	// 		font-weight: 700;
+	// 		text-decoration: underline;
+	// 		transition: 0.3s ease all;
+	// 	}
+	// 	.header__menu-link:last-child {
+	// 		margin-right: 0;
+	// 	}
+	// }
+	.header__btn-container {
+		display: flex;
+		align-items: center;
+		gap: .9375rem;
+		.header_btn {
+			padding: .625rem .9375rem;
+			font-size: .75rem;
+			text-transform: uppercase;
+			letter-spacing: 1.5px;
+			font-weight: 700;
+			color: var(--main-color-text);
+			background: #ffffff;
+			border: none;
+			border-radius: 2.8125rem;
+			box-shadow: 0px .5rem .9375rem rgba(0, 0, 0, 0.1);
+			transition: 0.3s ease;
+			cursor: pointer;
+			outline: none;
+		}
+		.header_btn:hover {
+			background-color: #2B88D9;
+			box-shadow: 0px .9375rem 1.25rem rgba(53, 88, 137, 0.4);
+			color: #ffffff;
+			transform: translateY(-0.2375rem);
+		}
+		.header_btn:active {
+			transform: translateY(-0.0325rem)
+		}
+		// .second__btn {
+		// 	display: none;
+		// }
+	}
+}

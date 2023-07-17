@@ -1,0 +1,75 @@
+.visit__cards-wrapper {
+	padding-top: 2.5rem;
+	.visit__cards {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		width: 62.5rem;
+		margin: 0 auto;
+		padding: .9375rem;
+		min-height: 25rem;
+		background-color: #6ca9df;
+		box-shadow: 2px 3px 6px 0px rgba(73, 74, 74, 0.87);
+		text-align: center;
+	}
+	.visit__cards-notification {
+		display: block;
+		text-transform: uppercase;
+		font-size: 1.875rem;
+		font-weight: 700;
+		color: var(--main-color-text);
+		margin-top: 1.5625rem;
+	}
+	.card {
+		position: relative;
+		width: 90%;
+		min-height: 5rem;
+		margin: 0 auto;
+		background-color: var(--base-background);
+		padding: .9375rem;
+		box-shadow: 2px 3px 6px 0px rgba(73, 74, 74, 0.87);
+		text-align: left;
+		.card__title {
+			font-size: 1.125rem;
+			font-weight: 700;
+			margin-bottom: .9375rem;
+			letter-spacing: var(--base-letter-spacing);
+		}
+		.card__doc-profile {
+
+			letter-spacing: var(--base-letter-spacing);
+			font-size: var(--base-font-size);
+		}
+		.card__btn {
+			position: absolute;
+			right: 0;
+			top: 0;
+			margin: .9375rem;
+			.card__btn-optional {
+				font-size: 1.125rem;
+				border: none;
+				cursor: pointer;
+				background-color: var(--base-background);
+			}
+			.fa-circle-info {
+				color: rgb(34, 184, 34);
+			}
+			.fa-circle-info:hover {
+				color: rgb(103, 242, 103);
+				transition: 0.3s ease all;
+			}
+			.fa-note-sticky {
+				color: rgb(247, 247, 69);
+			}
+			.fa-note-sticky:hover {
+				color: rgb(255, 255, 2);
+			}
+			.fa-trash {
+				color: rgb(247, 69, 69);
+			}
+			.fa-trash:hover {
+				color: rgb(249, 0, 0);
+			}
+		}
+	}
+}

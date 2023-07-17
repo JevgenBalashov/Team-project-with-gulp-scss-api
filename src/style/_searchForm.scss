@@ -1,0 +1,27 @@
+.main {
+	width: 100%;
+	padding-top: 2.5rem;
+	.main__form {
+		width: 50rem;
+		margin: 0 auto;
+		padding: 1.25rem 1.5625rem 1.25rem 1.5625rem;
+		background-color: var(--base-background);
+		box-shadow: 2px 3px 6px 0px rgba(73, 74, 74, 0.87);
+		display: flex;
+		justify-content: center;
+		.search__title,
+		.search__completed,
+		.search__urgency {
+			outline: none;
+			font-size: 12px;
+			width: 250px;
+			line-height: 1;
+			cursor: pointer;
+			padding: .75rem;
+			color: var(--main-dark-text);
+			background: #d0d0d0;
+			border: none;
+			transition: 0.3s ease;
+		}
+	}
+}

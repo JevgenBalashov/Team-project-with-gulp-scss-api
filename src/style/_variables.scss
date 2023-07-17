@@ -1,0 +1,37 @@
+// for mixin
+$minWidth: 320;
+$maxWidth: 1220;
+$maxWidthContainer: 1200;
+
+// for @media
+$sm-min-content: 320px;
+$sm-max-content: 480.99px;
+$md-min-content: 481px;
+$md-max-content: 992.99px;
+$lg-min-content: 993px;
+$lg-max-content: 1200px;
+
+// ======== //
+// for CSS
+:root {
+  --base-font-size: .875rem;
+  --base-line-height: 1.2;
+	--base-letter-spacing: .05rem;
+  --base-background: #ffffff;
+  --main-color-text: #333;
+  --main-white-text: #fff;
+  --main-dark-text: #454545;
+  --second-color-text: #2B88D9;
+  --active-color-text: #fff;
+
+  --min-content: 320px;
+  --max-content: 1200px;
+  --container-padding: 30px;
+
+  --sm-min-content: 320px;
+  --sm-max-content: 480.99px;
+  --md-min-content: 481px;
+  --md-max-content: 992.99px;
+  --lg-min-content: 993px;
+  --lg-max-content: 1200px;
+}

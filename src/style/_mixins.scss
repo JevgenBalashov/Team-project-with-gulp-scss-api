@@ -1,0 +1,47 @@
+@mixin flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+* flexible CSS property:
+* property: calc(MINpx + (MAX - MIN) * ((100vw - MIN_CONTENTpx) / (MAX_CONTENT - MIN_CONTENT)));
+*
+*
+* use:   @include adaptiv-value('margin-bottom', 84, 52, 1);
+*        @include adaptiv-value('css-variable', max, min, 1 or 2 or 3);
+*        1 - if less container (maxWidthContainer in variable.scss)
+*        2 - if more container (maxWidthContainer in variable.scss)
+*        3 - always
+*/
+@mixin adaptiv-value($property, $startSize, $minSize, $type: 3) {
+  $addSize: $startSize - $minSize;
+  @if $type==1 {
+    // if less container (maxWidthContainer)
+    #{$property}: $startSize + px;
+    @media (max-width: #{$maxWidthContainer + px}) {
+      #{$property}: calc(
+        #{$minSize + px} + #{$addSize} *
+          ((100vw - #{$minWidth + px}) / #{$maxWidthContainer - $minWidth})
+      );
+    }
+  } @else if $type==2 {
+    // if more container (maxWidthContainer)
+    #{$property}: $startSize + px;
+    @media (min-width: #{$maxWidthContainer + px}) {
+      #{$property}: calc(
+        #{$minSize + px} + #{$addSize} *
+          ((100vw - #{$minWidth + px}) / #{$maxWidth - $minWidth})
+      );
+    }
+  } @else {
+    // always
+    #{$property}: calc(
+      #{$minSize +
+        px} +
+        #{$addSize} *
+        ((100vw - #{$minWidth + px}) / #{$maxWidth - $minWidth})
+    );
+  }
+}

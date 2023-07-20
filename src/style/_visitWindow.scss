@@ -68,7 +68,8 @@
   }
   .btn-cover-case {
     text-align: center;
-    .visit__create-btn {
+    .visit__create-btn,
+    .visit__edit-btn {
       padding: 10px 20px;
       background-color: var(--second-color-text);
       color: #fff;
@@ -86,4 +87,8 @@
       background-color: #2b77bb;
     }
   }
+}
+
+.visit__edit-btn {
+  margin: 0 auto;
 }

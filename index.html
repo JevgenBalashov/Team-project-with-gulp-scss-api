@@ -15,7 +15,7 @@
 		<div class="visit__window" style="display: none;">
 				<div class="visit__window-container">
 					<div class="icon-close"><i class="fa-solid fa-xmark"></i></div>
-					<span class="visit__form-title">create visit:</span>
+					<span class="visit__form-title">створити візит:</span>
 					<form class="visit__info-form">
 						<input class="visit__info-fullname visit-info" type="text" placeholder="ПІБ" required>
 						<select class="visit__info-doctor visit-info" required>
@@ -40,6 +40,7 @@
 						<input type="text" class="visit-info visit__info-age-therapist" placeholder="вік" style="display: none;">
 						<div class="btn-cover-case">
 							<button type="submit" class="visit__create-btn">Створити</button>
+							<button class="visit__edit-btn" style="display: none;">Редагувати</button>
 						</div>
 					</form>
 				</div>
@@ -87,14 +88,14 @@
 				<form class="main__form-container">
 					<input class="search__title" type="text" name="search__title" placeholder="пошук по ПІБ/описанню візиту"/>
 					<select class="search__completed">
-						<option value="null">- выбрати завершення візиту -</option>
+						<option value="null">- вибрати завершення візиту -</option>
 						<option value="open">візит запланований</option>
 						<option value="done">візит пройшов</option>
 					</select>
 					<select class="search__urgency">
 						<option value="null">- вибрати терміновість візиту -</option>
 						<option value="high">невідкладна</option>
-						<option value="normal">пріорітетна</option>
+						<option value="normal">пріоритетна</option>
 						<option value="low">звичайна</option>
 					</select>
 				</form>
@@ -108,9 +109,9 @@
 						<h1 class="card__title">Balashov Jevgen</h1>
 						<h3 class="card__doc-profile">Cardiolog</h3>
 						<div class="card__btn">
-							<button class="card__btn-optional"><i class="fa-solid fa-circle-info"></i></button>
-							<button class="card__btn-optional"><i class="fa-solid fa-note-sticky"></i></button>
-							<button class="card__btn-optional"><i class="fa-solid fa-trash"></i></button>
+							<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
+							<button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
+							<button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>
 						</div>
 					</div>
 	

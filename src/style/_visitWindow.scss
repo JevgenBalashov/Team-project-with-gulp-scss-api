@@ -89,6 +89,11 @@
   }
 }
 
-.visit__edit-btn {
+.visit__edit-btn,
+.visit__create-btn {
   margin: 0 auto;
+}
+
+.hidden {
+  display: none;
 }

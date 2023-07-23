@@ -254,6 +254,7 @@ class Modal {
 
       if (selectedDoctor === 'cardiologist') {
         this.showFields(this.cardiologistFields);
+
       } else if (selectedDoctor === 'dentist') {
         this.showFields(this.dentistFields);
       } else if (selectedDoctor === 'therapist') {
@@ -263,6 +264,12 @@ class Modal {
 
     document.querySelector('.visit__create-btn').addEventListener('click', (event) => {
       event.preventDefault();
+      // Функціонал, щоб усі поля були заповнені користувачем, інакше виводиться alert повідомлення
+      if (!this.allFieldsAreFilled()) {
+        alert ("Будь ласка, заповніть усі поля форми!");
+        return
+      }
+
       document.querySelector('.visit__window').style.display = 'none';
       document.body.style.overflow = '';
       
@@ -315,27 +322,53 @@ class Modal {
     });
   }
 
+  // Функція для перевірки полів форми на заповнення. Ми проходимося циклом
+  // по кожному елементу з класом visit-info--showed (цей клас за замовчуванням має поле імені
+  // користувача, поле вибору доктора, мета візиту, короткий опис візиту та терміновість).
+  // Також цей клас можуть отримати додаткові поля, що відображаються при виборі кардіолога, 
+  // стоматолога чи терапевта. Це ми реалізували завдяки функції showFields(fields), що показує необхідні 
+  // поля та додає клас visit-info--showed; а також завдяки hideCardiologistFields, hideDentistFields,
+  // hideTherapistFields, що скривають необхідні поля та видаляють клас visit-info--showed.
+  // При проходженні циклом по елементам з класом visit-info--showed, якщо хоча б один елемент має falsy 
+  // значення або користувач не обрав лікаря чи терміновість візиту з випадаючого списку (тобто значення 
+  // поля дорівнює null), функція припиняє своє проходження циклом, повертаючи значення false. Якщо ж усі 
+  // поля заповнені, функція поверне значення true. 
+  
+  allFieldsAreFilled() {
+    const fields = document.querySelectorAll('.visit-info--showed');
+    for (let field of fields) {
+      if (!field.value || field.value === "null") {
+        return false
+      }
+    }
+    return true
+  }
+
   hideCardiologistFields() {
     Object.values(this.cardiologistFields).forEach(field => {
       field.style.display = 'none';
+      field.classList.remove('visit-info--showed');
     });
   }
 
   hideDentistFields() {
     Object.values(this.dentistFields).forEach(field => {
       field.style.display = 'none';
+      field.classList.remove('visit-info--showed');
     });
   }
 
   hideTherapistFields() {
     Object.values(this.therapistFields).forEach(field => {
       field.style.display = 'none';
+      field.classList.remove('visit-info--showed');
     });
   }
 
   showFields(fields) {
     Object.values(fields).forEach(field => {
       field.style.display = 'block';
+      field.classList.add('visit-info--showed');
     });
   }
 
@@ -401,7 +434,8 @@ class Modal {
   setupEventListeners(cardElement, cardId, response) {
     cardElement.addEventListener('click', (event) => {
       if (event.target.classList.contains('fa-trash')) {
-        cardElement.style.display = 'none';
+        // cardElement.style.display = 'none';
+        document.getElementById('root').removeChild(cardElement);
         fetch(`https://ajax.test-danit.com/api/v2/cards/${cardId}`, {
           method: 'DELETE',
           headers: {
@@ -410,6 +444,9 @@ class Modal {
         })
           .then( () => {
             console.log(`Картка з id '${cardId}' була успішно видалена`);
+            if (document.getElementById('root').children.length === 1) {
+              document.querySelector('.visit__cards-notification').style.display = 'block';
+            }
           })
           .catch(error => {
             console.error('Помилка при видаленні карти: ', error);
@@ -535,12 +572,17 @@ class Modal {
     <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
 
     card.append(cardButtons);
-    cardContainer.append(card);
+    // cardContainer.append(card);
+    cardContainer.prepend(card);
     cardElem = card;
   }
 }
 
-const modal = new Modal();
+// При перезавантаженні сторінки, всі картки з сервера показуються на екран.
+// Вже після того, як дані про картки дістані із сервера, ми створюємо екземпляр модального вікна
+// створюємо всі картки в DOM дереві та 'вішаємо' на картки івенти через метод класу Modal  
+// під назвою setupEventListeners, передаючи в параметри цього методу посилання на створену картку,
+// її id та дані про карточку з сервера. 
 
 function getAllCards(){
   return fetch('https://ajax.test-danit.com/api/v2/cards', {
@@ -552,31 +594,39 @@ function getAllCards(){
   })
   .then(response => response.json())
   .then(response => {
-    // response.forEach(element => {
-    //   const cardContainer = document.getElementById('root');
-    // const card = document.createElement('div');
-    // card.classList.add('card');
-    // const nameInfo = document.createElement('h1');
-    // nameInfo.classList.add('card__title');
-    // nameInfo.textContent = element.clientName;
-    // card.append(nameInfo);
-    // const doctor = document.createElement('h3');
-    // doctor.classList.add('card__doc-profile');
-    // doctor.textContent = element.doctor;
-    // card.append(doctor);
+    const modal = new Modal();
+    document.querySelector('.visit__cards-notification').style.display = 'none';
+    response.forEach(data => {
+      modal.editingCard = false;
+      const cardContainer = document.getElementById('root');
+      const card = document.createElement('div');
+      card.classList.add('card');
+      const nameInfo = document.createElement('h1');
+      nameInfo.classList.add('card__title');
+      nameInfo.textContent = data.clientName;
+      card.append(nameInfo);
+      const doctor = document.createElement('h3');
+      doctor.classList.add('card__doc-profile');
+      doctor.textContent = data.doctor;
+      card.append(doctor);
 
-    // const cardButtons = document.createElement('div');
-    // cardButtons.classList.add('card__btn');
-    // cardButtons.innerHTML = `<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
-    // <button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
-    // <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
+      const cardButtons = document.createElement('div');
+      cardButtons.classList.add('card__btn');
+      cardButtons.innerHTML = `<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
+      <button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
+      <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
 
-    // card.append(cardButtons);
-    // cardContainer.append(card);
-    // // cardElem = card;
-    // })
+      card.append(cardButtons);
+      // cardContainer.append(card);
+      cardContainer.prepend(card);
+      cardElem = card;
+      // modal.showCard(cardInformation);
+
+      modal.setupEventListeners(card, data.id, data);
+    })
     console.log(response)
   })
+  .catch (error => console.log('An error occured while fetching all cards from server: ', error))
 }
 
 if (localStorage.getItem('token')) {

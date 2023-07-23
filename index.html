@@ -16,17 +16,17 @@
 				<div class="visit__window-container">
 					<div class="icon-close"><i class="fa-solid fa-xmark"></i></div>
 					<span class="visit__form-title">створити візит</span>
-					<form class="visit__info-form">
-						<input class="visit__info-fullname visit-info" type="text" placeholder="ПІБ" required>
-						<select class="visit__info-doctor visit-info" required>
+					<form class="visit__info-form" name="visitForm">
+						<input class="visit__info-fullname visit-info visit-info--showed" type="text" placeholder="ПІБ" required>
+						<select class="visit__info-doctor visit-info visit-info--showed" required>
 							<option value="null">- вибрати лікаря -</option>
 							<option id="cardiologist" value="cardiologist">Кардіолог</option>
 							<option id="dentist" value="dentist">Стоматолог</option>
 							<option id="therapist" value="therapist">Терапевт</option>
 						</select>
-						<input type="text" class="visit__info-purpose visit-info" placeholder="мета візиту:" required>
-						<input type="text" class="visit__info-description visit-info" placeholder="короткий опис візиту:" required>
-						<select class="visit__info-urgency visit-info" required>
+						<input type="text" class="visit__info-purpose visit-info visit-info--showed" placeholder="мета візиту:" required>
+						<input type="text" class="visit__info-description visit-info visit-info--showed" placeholder="короткий опис візиту:" required>
+						<select class="visit__info-urgency visit-info visit-info--showed" required>
 							<option value="null">- виберіть терміновість -</option>
 							<option value="ordinary">звичайна</option>
 							<option value="priority">пріорітетна</option>

@@ -6,7 +6,6 @@
 
 let cardElem;
 
-
 class App {
   constructor() {
     this.loginButton = document.getElementById("login__button");
@@ -35,6 +34,15 @@ class App {
     // модального вікна форми створення візиту, модальне вікно закривається
     this.visitWindow.addEventListener('click', (event) => {
       if ( event.target === document.querySelector('.visit__window') || event.target.classList.contains('fa-xmark') ){
+        // Коли користувач натискає на іконку редагування картки кнопка 'Створити візит' пропадає та
+        // на її місці з'являється кнопка 'Редагувати', а також замість надпису 'Створити візит' 
+        // з'являється надпис 'Редагувати дані про візит'. Якщо ж користувач захоче вийти з модального
+        // вікна редагування картки, так і не натиснувши кнопку 'Редагувати', ми одразу ж ховаємо
+        // кнопку 'Редагувати', змінюючи її на кнопку 'Створити візит', а також змінюємо назву модального
+        // вікна на підходящий.
+        document.querySelector('button.visit__create-btn').style.display = 'block';
+        document.querySelector('.visit__edit-btn').style.display = 'none';
+        document.querySelector('span.visit__form-title').textContent = 'Створити візит';
         this.visitWindow.style.display = 'none';
         document.body.style.overflow = '';
       }
@@ -184,6 +192,8 @@ class App {
   }
 
   logout() {
+    // Видаляємо всі карточки з екрану, якщо користувач натиснув кнопку 'Вийти'
+    document.getElementById('root').innerHTML = '<span class="visit__cards-notification">no items have been added</span>';
     this.removeToken();
     console.log("Користувач вийшов з аккаунту");
     this.showLoggedOutState();
@@ -207,6 +217,8 @@ class App {
   }
 
   showLoggedInState() {
+    // Показуємо всі карточки з сервера, якщо користувач авторизований
+    getAllCards();
     this.loginButton.style.display = "none";
     this.createVisitButton.style.display = "inline-block";
     this.logOutButton.style.display = "block";
@@ -228,7 +240,12 @@ const app = new App();
 
 class Modal {
   constructor() {
-    this.editingCard = false;
+    // За замовчуванням картка не перебуває в стані редагування. Маніпуляції зі значенням this.isEditing
+    // потрібні через те, що якщо ми НЕ будемо відстежувати стан редагування, кожного разу, як користувач
+    // натисне на кнопку 'Редагувати', на неї буде 'навішуватись' подія кліку з колбеком  
+    // handleEditButtonClick. Тобто якщо натиснути перший раз на кнопку 'Редагувати' буде надісланий
+    // один PUT запит на сервер, якщо другий раз - два запити, третій раз - три запити і так до 
+    // нескінченності. Так як ми стежимо за станом редагування картки, ми уникаємо цієї проблеми.
     this.isEditing = false;
     this.additionalData = false;
     this.editBtn = document.querySelector('.visit__edit-btn');
@@ -272,9 +289,8 @@ class Modal {
 
       document.querySelector('.visit__window').style.display = 'none';
       document.body.style.overflow = '';
-      
-      if (!this.editingCard) {
-        const fullName = document.querySelector('.visit__info-fullname').value;
+
+      const fullName = document.querySelector('.visit__info-fullname').value;
         const doctor = document.querySelector('.visit__info-doctor').value;
         const purpose = document.querySelector('.visit__info-purpose').value;
         const description = document.querySelector('.visit__info-description').value;
@@ -318,7 +334,6 @@ class Modal {
         .catch(error => {
           console.error('Помилка при виконанні POST запиту:', error);
         });
-      }
     });
   }
 
@@ -373,9 +388,16 @@ class Modal {
   }
 
   handleEditButtonClick = (cardId, event) => {
+      // Якщо this.isEditing = true зупиняємо подальше виконання коду
       if (this.isEditing) return;
-      this.isEditing = true;
+      // Функціонал, щоб усі поля були заповнені користувачем, інакше виводиться alert повідомлення
+      if (!this.allFieldsAreFilled()) {
+        alert ("Будь ласка, заповніть усі поля форми!");
+        return
+      }
 
+      // Вказуємо, що картка перебуває в стані редагування
+      this.isEditing = true;
       event.preventDefault();
       console.log(cardId);
       const fullName = document.querySelector('.visit__info-fullname').value;
@@ -414,6 +436,7 @@ class Modal {
       })
       .then(response => response.json())
       .then(response => {
+        // Після виконання PUT запиту вказуємо, що картка вже не перебуває в стані редагування
         this.isEditing = false;
         document.querySelector('button.visit__create-btn').style.display = 'block';
         this.editBtn.style.display = 'none';
@@ -426,15 +449,16 @@ class Modal {
         console.log(response);
       })
       .catch(error => {
-        console.log("Помилка при виконанні PUT запиту: ", error);
+        // Після неуспішного виконання PUT запиту також вказуємо, що картка 
+        // вже не перебуває в стані редагування
         this.isEditing = false;
+        console.log("Помилка при виконанні PUT запиту: ", error);
       })
   };
 
   setupEventListeners(cardElement, cardId, response) {
     cardElement.addEventListener('click', (event) => {
       if (event.target.classList.contains('fa-trash')) {
-        // cardElement.style.display = 'none';
         document.getElementById('root').removeChild(cardElement);
         fetch(`https://ajax.test-danit.com/api/v2/cards/${cardId}`, {
           method: 'DELETE',
@@ -453,7 +477,6 @@ class Modal {
           });
       } else if (event.target.classList.contains('fa-note-sticky')) {
         window.scrollTo(0, 0);
-        this.editingCard = true;
         document.querySelector('.visit__window').style.display = "block";
         document.querySelector('button.visit__create-btn').style.display = 'none';
         this.editBtn.style.display = 'block';
@@ -461,6 +484,8 @@ class Modal {
         const editTitle = document.querySelector('span.visit__form-title');
         editTitle.textContent = 'Редагувати дані про візит';
 
+        // Якщо користувач натиснув на іконку 'Редагувати' та this.isEditing = false,
+        // ми 'вішаємо' на кнопку 'Редагувати' подію кліка
         if (!this.isEditing) {
           this.editBtn.addEventListener('click', (ev) => this.handleEditButtonClick(cardId, ev))
         }
@@ -552,7 +577,6 @@ class Modal {
   };
 
   showCard(data) {
-    this.editingCard = false;
     const cardContainer = document.getElementById('root');
     const card = document.createElement('div');
     card.classList.add('card');
@@ -572,7 +596,6 @@ class Modal {
     <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
 
     card.append(cardButtons);
-    // cardContainer.append(card);
     cardContainer.prepend(card);
     cardElem = card;
   }
@@ -617,18 +640,12 @@ function getAllCards(){
       <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
 
       card.append(cardButtons);
-      // cardContainer.append(card);
       cardContainer.prepend(card);
       cardElem = card;
-      // modal.showCard(cardInformation);
 
       modal.setupEventListeners(card, data.id, data);
     })
     console.log(response)
   })
   .catch (error => console.log('An error occured while fetching all cards from server: ', error))
-}
-
-if (localStorage.getItem('token')) {
-  getAllCards()
 }

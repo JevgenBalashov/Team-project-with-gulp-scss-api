@@ -6,6 +6,15 @@
 
 let cardElem;
 
+let input_search__title = document.querySelector('.search__title');
+let value_search__title;
+
+let select_search__doctor = document.querySelector('.search__doctor');
+let value_search__doctor;
+
+let select_search__urgency = document.querySelector('.search__urgency');
+let value_search__urgency;
+
 class App {
   constructor() {
     this.loginButton = document.getElementById("login__button");
@@ -607,6 +616,31 @@ class Modal {
 // під назвою setupEventListeners, передаючи в параметри цього методу посилання на створену картку,
 // її id та дані про карточку з сервера. 
 
+function printCard(data){
+  const cardContainer = document.getElementById('root');
+  const card = document.createElement('div');
+  card.classList.add('card');
+  const nameInfo = document.createElement('h1');
+  nameInfo.classList.add('card__title');
+  nameInfo.textContent = data.clientName;
+  card.append(nameInfo);
+  const doctor = document.createElement('h3');
+  doctor.classList.add('card__doc-profile');
+  doctor.textContent = data.doctor;
+  card.append(doctor);
+
+  const cardButtons = document.createElement('div');
+  cardButtons.classList.add('card__btn');
+  cardButtons.innerHTML = `<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
+  <button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
+  <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
+
+  card.append(cardButtons);
+  cardContainer.prepend(card);
+  cardElem = card;
+  return card;
+}
+
 function getAllCards(){
   return fetch('https://ajax.test-danit.com/api/v2/cards', {
     method: 'GET',
@@ -619,33 +653,81 @@ function getAllCards(){
   .then(response => {
     const modal = new Modal();
     document.querySelector('.visit__cards-notification').style.display = 'none';
+    document.querySelectorAll('.card').forEach(element =>{
+      element.remove();
+    });
     response.forEach(data => {
-      modal.editingCard = false;
-      const cardContainer = document.getElementById('root');
-      const card = document.createElement('div');
-      card.classList.add('card');
-      const nameInfo = document.createElement('h1');
-      nameInfo.classList.add('card__title');
-      nameInfo.textContent = data.clientName;
-      card.append(nameInfo);
-      const doctor = document.createElement('h3');
-      doctor.classList.add('card__doc-profile');
-      doctor.textContent = data.doctor;
-      card.append(doctor);
-
-      const cardButtons = document.createElement('div');
-      cardButtons.classList.add('card__btn');
-      cardButtons.innerHTML = `<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
-      <button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
-      <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
-
-      card.append(cardButtons);
-      cardContainer.prepend(card);
-      cardElem = card;
-
-      modal.setupEventListeners(card, data.id, data);
+      console.log(value_search__title, typeof(value_search__title));
+      console.log(value_search__doctor, typeof(value_search__doctor));
+      console.log(value_search__urgency, typeof(value_search__urgency));
+      if(value_search__title == '' && (value_search__doctor == null || value_search__doctor == 'null') && (value_search__urgency == null || value_search__urgency == 'null'))
+      {
+        modal.editingCard = false;
+        let card = printCard(data);
+        modal.setupEventListeners(card, data.id, data);
+      }
+      if(value_search__title != ''){
+        if(data.clientName.search(value_search__title) != -1){
+          modal.editingCard = false;
+          let card = printCard(data);
+          modal.setupEventListeners(card, data.id, data);
+        }
+      }else if(value_search__doctor != null){
+        if (data.doctor.search(value_search__doctor) != -1){
+          modal.editingCard = false;
+          let card = printCard(data);
+          modal.setupEventListeners(card, data.id, data);
+        }
+      }else if(value_search__urgency != null){
+        if (data.urgency.search(value_search__urgency) != -1){
+          modal.editingCard = false;
+          let card = printCard(data);
+          modal.setupEventListeners(card, data.id, data);
+        }
+      }
     })
     console.log(response)
   })
   .catch (error => console.log('An error occured while fetching all cards from server: ', error))
 }
+
+input_search__title.oninput = function() {
+  value_search__title = this.value.trim();
+
+  console.log(value_search__title);
+
+  select_search__doctor.value = null;
+  select_search__urgency.value = null;
+
+  value_search__doctor = null;
+  value_search__urgency = null;
+  getAllCards();
+}
+
+select_search__doctor.addEventListener('change', () => {
+  value_search__doctor = select_search__doctor.value;
+
+  console.log(select_search__doctor.value);
+  console.log(value_search__title);
+
+  input_search__title.value = '';
+  select_search__urgency.value = null;
+
+  value_search__title = '';
+  value_search__urgency = null;
+  getAllCards();
+});
+
+select_search__urgency.addEventListener('change', () => {
+  value_search__urgency = select_search__urgency.value;
+  
+  console.log(select_search__urgency.value);
+  console.log(value_search__title);
+
+  input_search__title.value = '';
+  select_search__doctor.value = null;
+
+  value_search__title = '';
+  value_search__doctor = null;
+  getAllCards();
+});

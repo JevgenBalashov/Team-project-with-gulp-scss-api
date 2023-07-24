@@ -35,6 +35,15 @@ class App {
     // модального вікна форми створення візиту, модальне вікно закривається
     this.visitWindow.addEventListener('click', (event) => {
       if ( event.target === document.querySelector('.visit__window') || event.target.classList.contains('fa-xmark') ){
+        // Коли користувач натискає на іконку редагування картки кнопка 'Створити візит' пропадає та
+        // на її місці з'являється кнопка 'Редагувати', а також замість надпису 'Створити візит' 
+        // з'являється надпис 'Редагувати дані про візит'. Якщо ж користувач захоче вийти з модального
+        // вікна редагування картки, так і не натиснувши кнопку 'Редагувати', ми одразу ж ховаємо
+        // кнопку 'Редагувати', змінюючи її на кнопку 'Створити візит', а також змінюємо назву модального
+        // вікна на підходящий.
+        document.querySelector('.visit__edit-btn').style.display = 'none';
+        document.querySelector('button.visit__create-btn').style.display = 'block';
+        document.querySelector('span.visit__form-title').textContent = 'Створити візит';
         this.visitWindow.style.display = 'none';
         document.body.style.overflow = '';
       }
@@ -184,6 +193,8 @@ class App {
   }
 
   logout() {
+    // Видаляємо всі карточки з екрану, якщо користувач натиснув кнопку 'Вийти'
+    document.getElementById('root').innerHTML = '<span class="visit__cards-notification">no items have been added</span>';
     this.removeToken();
     console.log("Користувач вийшов з аккаунту");
     this.showLoggedOutState();
@@ -207,6 +218,8 @@ class App {
   }
 
   showLoggedInState() {
+    // Показуємо всі карточки з сервера, якщо користувач авторизований
+    getAllCards();
     this.loginButton.style.display = "none";
     this.createVisitButton.style.display = "inline-block";
     this.logOutButton.style.display = "block";
@@ -228,7 +241,6 @@ const app = new App();
 
 class Modal {
   constructor() {
-    this.editingCard = false;
     this.isEditing = false;
     this.additionalData = false;
     this.editBtn = document.querySelector('.visit__edit-btn');
@@ -273,52 +285,50 @@ class Modal {
       document.querySelector('.visit__window').style.display = 'none';
       document.body.style.overflow = '';
       
-      if (!this.editingCard) {
-        const fullName = document.querySelector('.visit__info-fullname').value;
-        const doctor = document.querySelector('.visit__info-doctor').value;
-        const purpose = document.querySelector('.visit__info-purpose').value;
-        const description = document.querySelector('.visit__info-description').value;
-        const urgency = document.querySelector('.visit__info-urgency').value;
-        let additionalFields = {};
+      const fullName = document.querySelector('.visit__info-fullname').value;
+      const doctor = document.querySelector('.visit__info-doctor').value;
+      const purpose = document.querySelector('.visit__info-purpose').value;
+      const description = document.querySelector('.visit__info-description').value;
+      const urgency = document.querySelector('.visit__info-urgency').value;
+      let additionalFields = {};
 
-        if (doctor === 'cardiologist') {
-          additionalFields.bp = this.cardiologistFields.typicalPressure.value;
-          additionalFields.bodyMassIndex = this.cardiologistFields.bodyMassIndex.value;
-          additionalFields.heartDiseases = this.cardiologistFields.heartDiseases.value;
-          additionalFields.age = this.cardiologistFields.ageCardiologist.value;
-        } else if (doctor === 'dentist') {
-          additionalFields.lastVisitDate = this.dentistFields.lastVisitDate.value;
-        } else if (doctor === 'therapist') {
-          additionalFields.age = this.therapistFields.ageTherapist.value;
-        }
-
-        const cardData = {
-          clientName: fullName,
-          doctor,
-          description: `${purpose} - ${description}`,
-          urgency,
-          ...additionalFields
-        };
-
-        fetch("https://ajax.test-danit.com/api/v2/cards", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify(cardData)
-        })
-        .then(response => response.json())
-        .then(response => {
-          document.querySelector('.visit__cards-notification').style.display = 'none';
-          this.showCard(response);
-          this.setupEventListeners(cardElem, response.id, response);
-          console.log(response);
-        })
-        .catch(error => {
-          console.error('Помилка при виконанні POST запиту:', error);
-        });
+      if (doctor === 'cardiologist') {
+        additionalFields.bp = this.cardiologistFields.typicalPressure.value;
+        additionalFields.bodyMassIndex = this.cardiologistFields.bodyMassIndex.value;
+        additionalFields.heartDiseases = this.cardiologistFields.heartDiseases.value;
+        additionalFields.age = this.cardiologistFields.ageCardiologist.value;
+      } else if (doctor === 'dentist') {
+        additionalFields.lastVisitDate = this.dentistFields.lastVisitDate.value;
+      } else if (doctor === 'therapist') {
+        additionalFields.age = this.therapistFields.ageTherapist.value;
       }
+
+      const cardData = {
+        clientName: fullName,
+        doctor,
+        description: `${purpose} - ${description}`,
+        urgency,
+        ...additionalFields
+      };
+
+      fetch("https://ajax.test-danit.com/api/v2/cards", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(cardData)
+      })
+      .then(response => response.json())
+      .then(response => {
+        document.querySelector('.visit__cards-notification').style.display = 'none';
+        this.showCard(response);
+        this.setupEventListeners(cardElem, response.id, response);
+        console.log(response);
+      })
+      .catch(error => {
+        console.error('Помилка при виконанні POST запиту:', error);
+      });
     });
   }
 
@@ -373,10 +383,18 @@ class Modal {
   }
 
   handleEditButtonClick = (cardId, event) => {
+      event.preventDefault();
+
       if (this.isEditing) return;
+
+      // Функціонал, щоб усі поля були заповнені користувачем, інакше виводиться alert повідомлення
+      if (!this.allFieldsAreFilled()) {
+        alert ("Будь ласка, заповніть усі поля форми!");
+
+        return
+      }
       this.isEditing = true;
 
-      event.preventDefault();
       console.log(cardId);
       const fullName = document.querySelector('.visit__info-fullname').value;
       const doctor = document.querySelector('.visit__info-doctor').value;
@@ -423,6 +441,7 @@ class Modal {
         cardElem.style.display = 'none';
         this.showCard(response);
         this.setupEventListeners(cardElem, response.id, response);
+        console.log('Put запит пройшов успішно!');
         console.log(response);
       })
       .catch(error => {
@@ -453,7 +472,6 @@ class Modal {
           });
       } else if (event.target.classList.contains('fa-note-sticky')) {
         window.scrollTo(0, 0);
-        this.editingCard = true;
         document.querySelector('.visit__window').style.display = "block";
         document.querySelector('button.visit__create-btn').style.display = 'none';
         this.editBtn.style.display = 'block';
@@ -552,7 +570,6 @@ class Modal {
   };
 
   showCard(data) {
-    this.editingCard = false;
     const cardContainer = document.getElementById('root');
     const card = document.createElement('div');
     card.classList.add('card');
@@ -595,7 +612,15 @@ function getAllCards(){
   .then(response => response.json())
   .then(response => {
     const modal = new Modal();
-    document.querySelector('.visit__cards-notification').style.display = 'none';
+    // Якщо користувач авторизувався, але ще не робив жодної картки,
+    // то повинен з'являтися заголовок no items have been added,
+    // інакше, цей заголовок буде приховано
+    if (response.length === 0) {
+      document.querySelector('.visit__cards-notification').style.display = 'block';
+    }
+    else {
+      document.querySelector('.visit__cards-notification').style.display = 'none';
+    }
     response.forEach(data => {
       modal.editingCard = false;
       const cardContainer = document.getElementById('root');
@@ -629,6 +654,13 @@ function getAllCards(){
   .catch (error => console.log('An error occured while fetching all cards from server: ', error))
 }
 
-if (localStorage.getItem('token')) {
-  getAllCards()
-}
+
+
+
+
+
+
+
+
+
+

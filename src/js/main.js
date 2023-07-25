@@ -249,6 +249,12 @@ const app = new App();
 
 class Modal {
   constructor() {
+    // За замовчуванням картка не перебуває в стані редагування. Маніпуляції зі значенням this.isEditing
+    // потрібні через те, що якщо ми НЕ будемо відстежувати стан редагування, кожного разу, як користувач
+    // натисне на кнопку 'Редагувати', на неї буде 'навішуватись' подія кліку з колбеком  
+    // handleEditButtonClick. Тобто якщо натиснути перший раз на кнопку 'Редагувати' буде надісланий
+    // один PUT запит на сервер, якщо другий раз - два запити, третій раз - три запити і так до 
+    // нескінченності. Так як ми стежимо за станом редагування картки, ми уникаємо цієї проблеми.
     this.isEditing = false;
     this.additionalData = false;
     this.editBtn = document.querySelector('.visit__edit-btn');
@@ -393,14 +399,15 @@ class Modal {
   handleEditButtonClick = (cardId, event) => {
       event.preventDefault();
 
+      // Якщо this.isEditing = true зупиняємо подальше виконання коду
       if (this.isEditing) return;
-
       // Функціонал, щоб усі поля були заповнені користувачем, інакше виводиться alert повідомлення
       if (!this.allFieldsAreFilled()) {
         alert ("Будь ласка, заповніть усі поля форми!");
-
         return
       }
+
+      // Вказуємо, що картка перебуває в стані редагування
       this.isEditing = true;
 
       console.log(cardId);
@@ -440,6 +447,7 @@ class Modal {
       })
       .then(response => response.json())
       .then(response => {
+        // Після виконання PUT запиту вказуємо, що картка вже не перебуває в стані редагування
         this.isEditing = false;
         document.querySelector('button.visit__create-btn').style.display = 'block';
         this.editBtn.style.display = 'none';
@@ -453,15 +461,16 @@ class Modal {
         console.log(response);
       })
       .catch(error => {
-        console.log("Помилка при виконанні PUT запиту: ", error);
+        // Після неуспішного виконання PUT запиту також вказуємо, що картка 
+        // вже не перебуває в стані редагування
         this.isEditing = false;
+        console.log("Помилка при виконанні PUT запиту: ", error);
       })
   };
 
   setupEventListeners(cardElement, cardId, response) {
     cardElement.addEventListener('click', (event) => {
       if (event.target.classList.contains('fa-trash')) {
-        // cardElement.style.display = 'none';
         document.getElementById('root').removeChild(cardElement);
         fetch(`https://ajax.test-danit.com/api/v2/cards/${cardId}`, {
           method: 'DELETE',
@@ -487,6 +496,8 @@ class Modal {
         const editTitle = document.querySelector('span.visit__form-title');
         editTitle.textContent = 'Редагувати дані про візит';
 
+        // Якщо користувач натиснув на іконку 'Редагувати' та this.isEditing = false,
+        // ми 'вішаємо' на кнопку 'Редагувати' подію кліка
         if (!this.isEditing) {
           this.editBtn.addEventListener('click', (ev) => this.handleEditButtonClick(cardId, ev))
         }
@@ -597,7 +608,6 @@ class Modal {
     <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
 
     card.append(cardButtons);
-    // cardContainer.append(card);
     cardContainer.prepend(card);
     cardElem = card;
   }

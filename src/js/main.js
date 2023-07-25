@@ -6,6 +6,14 @@
 
 let cardElem;
 
+let input_search__title = document.querySelector('.search__title');
+let value_search__title;
+
+let select_search__doctor = document.querySelector('.search__doctor');
+let value_search__doctor;
+
+let select_search__urgency = document.querySelector('.search__urgency');
+let value_search__urgency;
 
 class App {
   constructor() {
@@ -659,7 +667,136 @@ function getAllCards(){
 
 
 
+// function printCard(data, modal){
+//   const cardContainer = document.getElementById('root');
+//   const card = document.createElement('div');
+//   card.classList.add('card');
+//   const nameInfo = document.createElement('h1');
+//   nameInfo.classList.add('card__title');
+//   nameInfo.textContent = data.clientName;
+//   card.append(nameInfo);
+//   const doctor = document.createElement('h3');
+//   doctor.classList.add('card__doc-profile');
+//   doctor.textContent = data.doctor;
+//   card.append(doctor);
 
+//   const cardButtons = document.createElement('div');
+//   cardButtons.classList.add('card__btn');
+//   cardButtons.innerHTML = `<button class="card__btn-optional card__btn-more-info"><i class="fa-solid fa-circle-info"></i></button>
+//   <button class="card__btn-optional card__btn-edit-info"><i class="fa-solid fa-note-sticky"></i></button>
+//   <button class="card__btn-optional card__btn-delete"><i class="fa-solid fa-trash"></i></button>`;
+
+//   card.append(cardButtons);
+//   cardContainer.prepend(card);
+
+//   cardElem = card;
+//   modal.setupEventListeners(card, data.id, data);
+//   // return card;
+// }
+
+// function getAllCards(){
+//   return fetch('https://ajax.test-danit.com/api/v2/cards', {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': `Bearer ${localStorage.getItem('token')}`
+//     }
+//   })
+//   .then(response => response.json())
+//   .then(response => {
+//     const modal = new Modal();
+//     // Якщо користувач авторизувався, але не створював жодної картки чи повидаляв усі,
+//     // у нього відображатиметься надпис 'no items have been added'
+//     if (response.length === 0) {
+//       document.querySelector('.visit__cards-notification').style.display = 'block'
+//     }
+//     else {
+//       document.querySelector('.visit__cards-notification').style.display = 'none';
+//     }
+//     document.querySelectorAll('.card').forEach(element => {
+//       element.remove();
+//     });
+
+//     let cardsMatchFilter = false;
+
+//     response.forEach(data => {
+//       if(value_search__title == '' && (value_search__doctor == null || value_search__doctor == 'null') && (value_search__urgency == null || value_search__urgency == 'null'))
+//       {
+//         modal.editingCard = false;
+//         printCard(data, modal);
+//         // modal.setupEventListeners(card, data.id, data);
+//         cardsMatchFilter = true;
+//       }
+//       if(value_search__title != ''){
+//         if (data.clientName.replaceAll(" ", "").toLowerCase().search(value_search__title) != -1) {
+//           modal.editingCard = false;
+//           printCard(data, modal);
+//           // modal.setupEventListeners(card, data.id, data);
+//           cardsMatchFilter = true;
+//         }
+//       }else if(value_search__doctor != null){
+//         if (data.doctor.search(value_search__doctor) != -1) {
+//           modal.editingCard = false;
+//           printCard(data, modal);
+//           // modal.setupEventListeners(card, data.id, data);
+//           cardsMatchFilter = true;
+//         }
+//       }else if(value_search__urgency != null){
+//         if (data.urgency.search(value_search__urgency) != -1) {
+//           modal.editingCard = false;
+//           printCard(data, modal);
+//           // modal.setupEventListeners(card, data.id, data);
+//           cardsMatchFilter = true;
+//         }
+//       }
+//     })
+
+//     if (!cardsMatchFilter) {
+//       document.querySelector('.visit__cards-notification').style.display = 'block';
+//       document.querySelector('.visit__cards-notification').textContent = 'There are no cards that match this filter';
+//     }
+//     else {
+//       document.querySelector('.visit__cards-notification').textContent = 'no items have been added';
+//       document.querySelector('.visit__cards-notification').style.display = 'none';
+//     }
+
+//     console.log(response)
+//   })
+//   .catch (error => console.log('An error occured while fetching all cards from server: ', error))
+// }
+
+// input_search__title.oninput = function() {
+//   value_search__title = this.value.trim().toLowerCase();
+
+//   select_search__doctor.value = null;
+//   select_search__urgency.value = null;
+
+//   value_search__doctor = null;
+//   value_search__urgency = null;
+//   getAllCards();
+// }
+
+// select_search__doctor.addEventListener('change', () => {
+//   value_search__doctor = select_search__doctor.value;
+
+//   input_search__title.value = '';
+//   select_search__urgency.value = null;
+
+//   value_search__title = '';
+//   value_search__urgency = null;
+//   getAllCards();
+// });
+
+// select_search__urgency.addEventListener('change', () => {
+//   value_search__urgency = select_search__urgency.value;
+
+//   input_search__title.value = '';
+//   select_search__doctor.value = null;
+
+//   value_search__title = '';
+//   value_search__doctor = null;
+//   getAllCards();
+// });
 
 
 

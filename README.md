@@ -8,10 +8,10 @@
 ## Tasks of each member of the project
 
 1. Vladyslav Soruk
-   * Створення картки яка створюється по кліку та з'являється на дошці (разом з івентами редагування, видалення та показу додаткової інформації), а також показ усіх створених зареєстрованим користувачем карток на дошці  
+   * Creating a card that is generated upon clicking and appears on the board (along with editing, deleting, and displaying additional information events), as well as displaying all cards created by registered users on the board. 
 1. Vasyl Yurchenko
-   * Фільтр карток
+   * Card filtering.
 1. Yevgeniy Balashov
-   * html та css для проекту
-   * клас APP, що відповідає за авторизацію користувача
-   * частина класу Modal (конструктор, показ додаткових полів модального вікна при зміні доктора)
+   *HTML and CSS for the project.
+   *APP class responsible for user authentication.
+   *Part of the Modal class (constructor, displaying additional fields in the modal    window when changing the doctor).
